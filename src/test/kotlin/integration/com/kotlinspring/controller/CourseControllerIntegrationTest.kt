@@ -1,6 +1,7 @@
 package com.kotlinspring.controller
 
 import com.kotlinspring.dto.CourseDTO
+import com.kotlinspring.entity.Course
 import com.kotlinspring.repository.CourseRepository
 import com.kotlinspring.util.courseEntityList
 import org.junit.jupiter.api.BeforeEach
@@ -70,5 +71,26 @@ class CourseControllerIntegrationTest {
         assertEquals(3, coursesDTOs!!.size)
     }
 
+    @Test
+    fun updateCourse() {
+        //existing course
+        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development")
+        courseRepository.save(course)
+
+        //Updated CourserDto
+        val updatedCourseDTO = CourseDTO(null, "Build Restful APIs using Spring and Kotlin1", "Development")
+        val updatedCourse = webTestClient
+            .put()
+            .uri("/v1/courses/{course_id}", course.id)
+            .bodyValue(updatedCourseDTO)
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectBody(CourseDTO::class.java)
+            .returnResult()
+            .responseBody
+
+        assertEquals("Build Restful APIs using Spring and Kotlin1", updatedCourse!!.name)
+    }
 
 }
