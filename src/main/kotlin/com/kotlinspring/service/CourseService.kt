@@ -11,7 +11,7 @@ class CourseService(val courseRepository: CourseRepository) {
 
     companion object : KLogging()
 
-    fun addCourse(courseDTO: CourseDTO) : CourseDTO {
+    fun addCourse(courseDTO: CourseDTO): CourseDTO {
         val courseEntity = courseDTO.let { Course(null, it.name, it.category) }
 
         courseRepository.save(courseEntity)
@@ -19,6 +19,10 @@ class CourseService(val courseRepository: CourseRepository) {
         logger.info("Saved course is: $courseEntity")
 
         return courseEntity.let { CourseDTO(it.id, it.name, it.category) }
+    }
+
+    fun getAllCourses(): List<CourseDTO> {
+        return courseRepository.findAll().map { CourseDTO(it.id, it.name, it.category) }
     }
 
 }

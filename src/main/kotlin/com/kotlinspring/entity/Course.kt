@@ -15,4 +15,7 @@ data class Course(
     val id: Int?,
     val name: String,
     val category: String
-)
+) {
+    // No-args constructor
+    constructor() : this(null, "", "")
+}
