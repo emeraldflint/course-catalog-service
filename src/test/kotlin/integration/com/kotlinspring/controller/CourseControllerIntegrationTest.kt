@@ -5,6 +5,7 @@ import com.kotlinspring.entity.Course
 import com.kotlinspring.repository.CourseRepository
 import com.kotlinspring.util.courseEntityList
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -34,6 +35,7 @@ class CourseControllerIntegrationTest {
     }
 
     @Test
+    @DisplayName("Add course")
     fun addCourse() {
         val courseDTO = CourseDTO(
             null,
@@ -57,6 +59,7 @@ class CourseControllerIntegrationTest {
     }
 
     @Test
+    @DisplayName("Retrieve all courses")
     fun retrieveAllCourses() {
         val coursesDTOs = webTestClient
             .get()
@@ -72,6 +75,7 @@ class CourseControllerIntegrationTest {
     }
 
     @Test
+    @DisplayName("Update course")
     fun updateCourse() {
         //existing course
         val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development")
@@ -91,6 +95,22 @@ class CourseControllerIntegrationTest {
             .responseBody
 
         assertEquals("Build Restful APIs using Spring and Kotlin1", updatedCourse!!.name)
+    }
+
+    @Test
+    @DisplayName("Delete course")
+    fun deleteCourse() {
+        //existing course
+        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development")
+        courseRepository.save(course)
+
+        //Delete course
+        webTestClient
+            .delete()
+            .uri("/v1/courses/{course_id}", course.id)
+            .exchange()
+            .expectStatus()
+            .isNoContent
     }
 
 }
