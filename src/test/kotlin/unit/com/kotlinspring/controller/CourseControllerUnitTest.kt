@@ -20,13 +20,13 @@ class CourseControllerUnitTest {
     lateinit var webTestClient: WebTestClient
 
     @MockkBean
-    lateinit var courseService: CourseService
+    lateinit var courseServiceMockk: CourseService
 
     @Test
     fun addCourse() {
         val courseDTO = CourseDTO(null, "Build Restful APIs using Spring and Kotlin", "Development")
 
-        every { courseService.addCourse(any()) } returns courseDTO(id = 1)
+        every { courseServiceMockk.addCourse(any()) } returns courseDTO(id = 1)
 
         val result = webTestClient
             .post()
@@ -40,6 +40,27 @@ class CourseControllerUnitTest {
             .responseBody
 
         assertTrue { result!!.id != null }
+    }
+
+    @Test
+    fun retrieveAllCourses() {
+        every { courseServiceMockk.getAllCourses() } returns listOf(
+            courseDTO(id = 1, name = "Build Restful APIs using Spring and Kotlin", category = "Development"),
+            courseDTO(id = 2, name = "Build Reactive Microservices using Spring WebFlux/SpringBoot", category = "Development"),
+            courseDTO(id = 3, name = "Wiremock for Java Developers", category = "Development")
+        )
+
+        val result = webTestClient
+            .get()
+            .uri("/v1/courses")
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful
+            .expectBodyList(CourseDTO::class.java)
+            .returnResult()
+            .responseBody
+
+        assertTrue { result!!.size == 3 }
     }
 
 }
