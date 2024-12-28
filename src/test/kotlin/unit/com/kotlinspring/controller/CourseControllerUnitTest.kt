@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.web.reactive.server.WebTestClient
+import kotlin.test.assertEquals
 
 @WebMvcTest(CourseController::class)
 @AutoConfigureWebTestClient
@@ -47,10 +48,57 @@ class CourseControllerUnitTest {
     }
 
     @Test
+    fun addCourse_validation() {
+        val courseDTO = CourseDTO(null, "", "")
+
+        every { courseServiceMockk.addCourse(any()) } returns courseDTO(id = 1)
+
+        val response = webTestClient
+            .post()
+            .uri("/v1/courses")
+            .bodyValue(courseDTO)
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+            .expectBody(String::class.java)
+            .returnResult()
+            .responseBody
+
+        assertEquals("courseDTO.category must not be blank, courseDTO.name must not be blank", response)
+    }
+
+    @Test
+    fun addCourse_runtimeException() {
+        val courseDTO = CourseDTO(null, "Build Restful APIs using Spring and Kotlin", "Development")
+
+
+        val errorMessage = "Unexpected error occurred"
+
+        every { courseServiceMockk.addCourse(any()) } throws RuntimeException(errorMessage)
+
+        val response = webTestClient
+            .post()
+            .uri("/v1/courses")
+            .bodyValue(courseDTO)
+            .exchange()
+            .expectStatus()
+            .is5xxServerError
+            .expectBody(String::class.java)
+            .returnResult()
+            .responseBody
+
+        assertEquals(errorMessage, response)
+    }
+
+    @Test
     fun retrieveAllCourses() {
         every { courseServiceMockk.getAllCourses() } returns listOf(
             courseDTO(id = 1, name = "Build Restful APIs using Spring and Kotlin", category = "Development"),
-            courseDTO(id = 2, name = "Build Reactive Microservices using Spring WebFlux/SpringBoot", category = "Development"),
+            courseDTO(
+                id = 2,
+                name = "Build Reactive Microservices using Spring WebFlux/SpringBoot",
+                category = "Development"
+            ),
             courseDTO(id = 3, name = "Wiremock for Java Developers", category = "Development")
         )
 
@@ -69,11 +117,15 @@ class CourseControllerUnitTest {
 
     @Test
     fun updateCourse() {
-        val updatedCourseEntity = CourseDTO(null,
-            "Apache Kafka for Developers using Spring Boot1", "Development" )
+        val updatedCourseEntity = CourseDTO(
+            null,
+            "Apache Kafka for Developers using Spring Boot1", "Development"
+        )
 
-        every { courseServiceMockk.updateCourse(any(), any()) } returns CourseDTO(100,
-            "Apache Kafka for Developers using Spring Boot1", "Development")
+        every { courseServiceMockk.updateCourse(any(), any()) } returns CourseDTO(
+            100,
+            "Apache Kafka for Developers using Spring Boot1", "Development"
+        )
 
 
         val updatedCourseDTO = webTestClient
