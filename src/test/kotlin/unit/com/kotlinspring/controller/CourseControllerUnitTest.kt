@@ -92,7 +92,7 @@ class CourseControllerUnitTest {
 
     @Test
     fun retrieveAllCourses() {
-        every { courseServiceMockk.getAllCourses() } returns listOf(
+        every { courseServiceMockk.getAllCourses(any()) } returns listOf(
             courseDTO(id = 1, name = "Build Restful APIs using Spring and Kotlin", category = "Development"),
             courseDTO(
                 id = 2,
