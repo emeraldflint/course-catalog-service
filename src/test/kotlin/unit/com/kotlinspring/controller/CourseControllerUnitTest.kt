@@ -5,6 +5,9 @@ import com.kotlinspring.service.CourseService
 import com.kotlinspring.util.courseDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -84,6 +87,20 @@ class CourseControllerUnitTest {
             .responseBody
 
         Assertions.assertEquals("Apache Kafka for Developers using Spring Boot1", updatedCourseDTO?.name)
+    }
+
+    @Test
+    fun deleteCourse() {
+
+        every { courseServiceMockk.deleteCourse(any()) } just runs
+
+        webTestClient
+            .delete()
+            .uri("/v1/courses/{courseId}", 100)
+            .exchange()
+            .expectStatus().isNoContent
+
+        verify(exactly = 1) { courseServiceMockk.deleteCourse(any()) }
     }
 
 }
