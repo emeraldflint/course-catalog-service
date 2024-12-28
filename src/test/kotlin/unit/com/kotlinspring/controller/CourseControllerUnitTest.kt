@@ -47,10 +47,29 @@ class CourseControllerUnitTest {
     }
 
     @Test
+    fun addCourse_validation() {
+        val courseDTO = CourseDTO(null, "", "")
+
+        every { courseServiceMockk.addCourse(any()) } returns courseDTO(id = 1)
+
+        webTestClient
+            .post()
+            .uri("/v1/courses")
+            .bodyValue(courseDTO)
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+    }
+
+    @Test
     fun retrieveAllCourses() {
         every { courseServiceMockk.getAllCourses() } returns listOf(
             courseDTO(id = 1, name = "Build Restful APIs using Spring and Kotlin", category = "Development"),
-            courseDTO(id = 2, name = "Build Reactive Microservices using Spring WebFlux/SpringBoot", category = "Development"),
+            courseDTO(
+                id = 2,
+                name = "Build Reactive Microservices using Spring WebFlux/SpringBoot",
+                category = "Development"
+            ),
             courseDTO(id = 3, name = "Wiremock for Java Developers", category = "Development")
         )
 
@@ -69,11 +88,15 @@ class CourseControllerUnitTest {
 
     @Test
     fun updateCourse() {
-        val updatedCourseEntity = CourseDTO(null,
-            "Apache Kafka for Developers using Spring Boot1", "Development" )
+        val updatedCourseEntity = CourseDTO(
+            null,
+            "Apache Kafka for Developers using Spring Boot1", "Development"
+        )
 
-        every { courseServiceMockk.updateCourse(any(), any()) } returns CourseDTO(100,
-            "Apache Kafka for Developers using Spring Boot1", "Development")
+        every { courseServiceMockk.updateCourse(any(), any()) } returns CourseDTO(
+            100,
+            "Apache Kafka for Developers using Spring Boot1", "Development"
+        )
 
 
         val updatedCourseDTO = webTestClient
