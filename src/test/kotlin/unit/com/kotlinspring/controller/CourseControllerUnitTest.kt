@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.web.reactive.server.WebTestClient
+import kotlin.test.assertEquals
 
 @WebMvcTest(CourseController::class)
 @AutoConfigureWebTestClient
@@ -52,13 +53,18 @@ class CourseControllerUnitTest {
 
         every { courseServiceMockk.addCourse(any()) } returns courseDTO(id = 1)
 
-        webTestClient
+        val response = webTestClient
             .post()
             .uri("/v1/courses")
             .bodyValue(courseDTO)
             .exchange()
             .expectStatus()
             .isBadRequest
+            .expectBody(String::class.java)
+            .returnResult()
+            .responseBody
+
+        assertEquals("courseDTO.category must not be blank, courseDTO.name must not be blank", response)
     }
 
     @Test
