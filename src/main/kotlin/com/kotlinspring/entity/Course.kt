@@ -23,4 +23,10 @@ data class Course(
 ) {
     // No-args constructor
     constructor() : this(null, "", "", Instructor())
+
+    override fun toString(): String {
+        return "Course(id=$id, name='$name', category='$category', instructor=${instructor?.id})"
+    }
+
+
 }
