@@ -19,7 +19,7 @@ data class Course(
     var category: String,
     @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
     @JoinColumn(name = "INSTRUCTOR_ID", nullable = false)
-    var instructor: Instructor
+    var instructor: Instructor?
 ) {
     // No-args constructor
     constructor() : this(null, "", "", Instructor())

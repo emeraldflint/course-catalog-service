@@ -13,7 +13,7 @@ class CourseService(val courseRepository: CourseRepository) {
     companion object : KLogging()
 
     fun addCourse(courseDTO: CourseDTO): CourseDTO {
-        val courseEntity = courseDTO.let { Course(null, it.name, it.category) }
+        val courseEntity = courseDTO.let { Course(null, it.name, it.category, null) }
 
         courseRepository.save(courseEntity)
 
