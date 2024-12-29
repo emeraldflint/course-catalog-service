@@ -3,7 +3,9 @@ package com.kotlinspring.controller
 import com.kotlinspring.dto.CourseDTO
 import com.kotlinspring.entity.Course
 import com.kotlinspring.repository.CourseRepository
+import com.kotlinspring.repository.InstructorRepository
 import com.kotlinspring.util.courseEntityList
+import com.kotlinspring.util.instructorEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -27,21 +29,32 @@ class CourseControllerIntegrationTest {
     @Autowired
     lateinit var courseRepository: CourseRepository
 
+    @Autowired
+    lateinit var instructorRepository: InstructorRepository
+
     @BeforeEach
     fun setUp() {
-        courseRepository.deleteAll()
 
-        val courses = courseEntityList()
+        courseRepository.deleteAll()
+        instructorRepository.deleteAll()
+
+        val instructor = instructorEntity()
+        instructorRepository.save(instructor)
+
+        val courses = courseEntityList(instructor)
         courseRepository.saveAll(courses)
     }
 
     @Test
     @DisplayName("Add course")
     fun addCourse() {
+        val instructor = instructorRepository.findAll().first()
+
         val courseDTO = CourseDTO(
             null,
             "Build Restful APIs using Kotlin",
-            "Emerald Flint"
+            "Emerald Flint",
+            instructor.id
         )
 
 
@@ -79,7 +92,9 @@ class CourseControllerIntegrationTest {
     @DisplayName("Update course")
     fun updateCourse() {
         //existing course
-        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development")
+        val instructor = instructorRepository.findAll().first()
+
+        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development", instructor)
         courseRepository.save(course)
 
         //Updated CourserDto
@@ -102,7 +117,8 @@ class CourseControllerIntegrationTest {
     @DisplayName("Delete course")
     fun deleteCourse() {
         //existing course
-        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development")
+        val instructor = instructorRepository.findAll().first()
+        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development", instructor)
         courseRepository.save(course)
 
         //Delete course
