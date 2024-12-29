@@ -1,29 +1,45 @@
 package com.kotlinspring.repository
 
+import com.kotlinspring.util.PostgresSQLContainerInitializer
 import com.kotlinspring.util.courseEntityList
+import com.kotlinspring.util.instructorEntity
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import java.util.stream.Stream
 import kotlin.test.assertEquals
 
 @DataJpaTest
 @ActiveProfiles("test")
-class CourseRepositoryIntegrationTest {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DirtiesContext
+class CourseRepositoryIntegrationTest : PostgresSQLContainerInitializer(){
 
     @Autowired
     lateinit var courseRepository: CourseRepository
+    @Autowired
+    lateinit var instructorRepository: InstructorRepository
 
     @BeforeEach
-    fun setUp() {
+    fun setUp(){
+        instructorRepository.deleteAll()
         courseRepository.deleteAll()
-        val courses = courseEntityList()
-        courseRepository.saveAll(courses)
+
+        val instructor = instructorEntity()
+        instructorRepository.save(instructor)
+
+        val courses = courseEntityList(instructor)
+        courses.forEach {
+            courseRepository.save(it)
+        }
+
     }
 
     @Test
