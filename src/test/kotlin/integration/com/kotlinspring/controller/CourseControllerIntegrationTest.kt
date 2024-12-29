@@ -2,6 +2,7 @@ package com.kotlinspring.controller
 
 import com.kotlinspring.dto.CourseDTO
 import com.kotlinspring.entity.Course
+import com.kotlinspring.entity.Instructor
 import com.kotlinspring.repository.CourseRepository
 import com.kotlinspring.util.courseEntityList
 import org.junit.jupiter.api.BeforeEach
@@ -79,7 +80,7 @@ class CourseControllerIntegrationTest {
     @DisplayName("Update course")
     fun updateCourse() {
         //existing course
-        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development")
+        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development", Instructor())
         courseRepository.save(course)
 
         //Updated CourserDto
@@ -102,7 +103,7 @@ class CourseControllerIntegrationTest {
     @DisplayName("Delete course")
     fun deleteCourse() {
         //existing course
-        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development")
+        val course = Course(null, "Build Restful APIs using Spring and Kotlin", "Development", Instructor())
         courseRepository.save(course)
 
         //Delete course
