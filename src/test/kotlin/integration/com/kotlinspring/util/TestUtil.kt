@@ -11,9 +11,15 @@ fun courseEntityList() = listOf(
     Course(null, "Wiremock for Java Developers", "Development", Instructor())
 )
 
+fun courseEntityList(instructor: Instructor? = null) = listOf(
+    Course(null, "Build Restful APIs using SpringBoot and Kotlin", "Development", instructor),
+    Course(null, "Build Reactive Microservices using SpringBoot WebFlux/Spring Boot", "Development", instructor),
+    Course(null, "Wiremock for Java Developers", "Development", instructor)
+)
+
 fun courseDTO(
     id: Int? = null,
-    name: String = "Build Restful APIs using Spring Boot and Kotlin",
+    name: String = "Build Restful APIs using SpringBoot and Kotlin",
     category: String = "Development"
 ) = CourseDTO(
     id,
@@ -34,3 +40,5 @@ fun instructorDTO(
     id,
     name
 )
+
+fun instructorEntity(name : String  = "Eugene Black") = Instructor(null, name, listOf())
